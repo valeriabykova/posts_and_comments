@@ -5,12 +5,51 @@
 
 ## Характеристики системы постов:
 - Можно просмотреть список постов.
+В примере – три первых поста на странице, каждый – с одним комментарием.
 
 ```graphql
+query GetPosts {
+  posts(page: 1, limit: 3) {
+    id
+    title
+    author
+    comments(first: 1) {
+      edges {
+        node {
+          body
+        }
+      }
+    }
+  }
+}
 
 ```
 - Можно просмотреть пост и комментарии под ним.
+Здесь можно получить запись по ее id, а также первые 3 комментария + по одному ответу к каждому из комментариев.
 ```graphql
+query GetPost {
+  post(id: 1) {
+    title
+    body
+    author
+    comments(first: 3) {
+      edges {
+        node {
+          id
+          body
+          replies(first: 1) {
+            edges {
+              node {
+                id
+                body
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
 
 ```
 
@@ -18,8 +57,33 @@
 
 Для выполнения запросов необходимо перейти на Playground от GraphQL (создается при запуске программы), и выполнить запросы сначала для созданию постов/комментариев, а после – для  их вывода
 - Создание поста:
+```graphql
+mutation NewPost {
+   createPost(post: {title:"lorem", body:"ipsum", author: "me", allowComments: true}) {
+     id
+     body
+   }
+ }
 
-- Создание комментария
+```
+- Создание комментария к посту
+```graphql
+mutation NewCommentToPost {
+  createComment(comment: {postId: 1, body:"it's true", author:"anonym"}) {
+    id
+  }
+}
+```
+- Создание ответа на комментарий
+
+```
+mutation NewCommentToComment {
+  createComment(comment: {postId: 1, parentId: 1, body:"no u", author:"me"}) {
+    id
+    parentId
+  }
+}
+```
 
 ## Характеристики системы комментариев к постам:
 - Комментарии организованы иерархически, позволяя вложенность без ограничений.
