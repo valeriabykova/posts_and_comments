@@ -76,7 +76,7 @@ mutation NewCommentToPost {
 ```
 - Создание ответа на комментарий
 
-```
+```graphql
 mutation NewCommentToComment {
   createComment(comment: {postId: 1, parentId: 1, body:"no u", author:"me"}) {
     id
